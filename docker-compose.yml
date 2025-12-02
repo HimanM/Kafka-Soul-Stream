@@ -20,33 +20,52 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    healthcheck:
+      test: [ "CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  order-service:
-    build: ./order_service
+  contract-service:
+    build: ./contract_service
     ports:
       - "8000:8000"
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-      KAFKA_TOPIC: orders
+      KAFKA_TOPIC: contracts
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
 
-  payment-service:
-    build: ./payment_service
+  judgment-service:
+    build: ./judgment_service
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-      CONSUME_TOPIC: orders
-      PRODUCE_TOPIC: payments
+      CONSUME_TOPIC: contracts
+      PRODUCE_TOPIC: judgments
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
 
-  shipping-service:
-    build: ./shipping_service
+  limbo-service:
+    build: ./limbo_service
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-      CONSUME_TOPIC: payments
+      CONSUME_TOPIC: judgments
+      PRODUCE_TOPIC: ascensions
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
+
+  revelation-service:
+    build: ./revelation_service
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      CONSUME_TOPIC: ascensions
+      PRODUCE_TOPIC: revelations
+    depends_on:
+      kafka:
+        condition: service_healthy
 
   frontend:
     build:
@@ -56,6 +75,6 @@ services:
       - "3000:3000"
     environment:
       NEXT_PUBLIC_API_URL: http://localhost:8000
-      API_URL: http://order-service:8000
+      API_URL: http://contract-service:8000
     depends_on:
-      - order-service
+      - contract-service

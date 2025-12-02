@@ -6,12 +6,15 @@ from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
 from contextlib import asynccontextmanager
 import os
 from typing import List
+import random
+from fastapi.middleware.cors import CORSMiddleware
 
 # Configuration
 KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'kafka:9092')
-KAFKA_TOPIC = os.getenv('KAFKA_TOPIC', 'orders')
-KAFKA_PAYMENTS_TOPIC = 'payments'
-KAFKA_SHIPMENTS_TOPIC = 'shipments'
+KAFKA_TOPIC = os.getenv('KAFKA_TOPIC', 'contracts')
+KAFKA_JUDGMENTS_TOPIC = 'judgments'
+KAFKA_ASCENSIONS_TOPIC = 'ascensions'
+KAFKA_REVELATIONS_TOPIC = 'revelations'
 
 # Global Producer
 producer = None
@@ -39,13 +42,15 @@ manager = ConnectionManager()
 
 async def consume_events():
     consumer = AIOKafkaConsumer(
-        KAFKA_TOPIC, KAFKA_PAYMENTS_TOPIC, KAFKA_SHIPMENTS_TOPIC,
+        KAFKA_TOPIC, KAFKA_JUDGMENTS_TOPIC, KAFKA_ASCENSIONS_TOPIC, KAFKA_REVELATIONS_TOPIC,
         bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
-        group_id="monitor-group"
+        group_id="soul-monitor-group"
     )
     await consumer.start()
+    print(f"Contract Consumer started on topics: {KAFKA_TOPIC}, {KAFKA_JUDGMENTS_TOPIC}, {KAFKA_ASCENSIONS_TOPIC}, {KAFKA_REVELATIONS_TOPIC}")
     try:
         async for msg in consumer:
+            print(f"CONSUMER RECEIVED: {msg.topic} - {msg.value}")
             event_type = msg.topic
             data = json.loads(msg.value.decode('utf-8'))
             message = json.dumps({
@@ -53,6 +58,9 @@ async def consume_events():
                 "data": data
             })
             await manager.broadcast(message)
+            print(f"BROADCASTED: {message}")
+    except Exception as e:
+        print(f"CONSUMER ERROR: {e}")
     finally:
         await consumer.stop()
 
@@ -61,36 +69,45 @@ async def lifespan(app: FastAPI):
     global producer
     producer = AIOKafkaProducer(bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS)
     await producer.start()
-    print("Kafka Producer started")
+    print("Contract Producer started")
     
     # Start consumer task
     asyncio.create_task(consume_events())
     
     yield
     await producer.stop()
-    print("Kafka Producer stopped")
+    print("Contract Producer stopped")
 
+# FastAPI Setup and CORS Configuration
 app = FastAPI(lifespan=lifespan)
 
-class Order(BaseModel):
-    user_id: str
-    items: list
-    total_amount: float
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-@app.post("/orders")
-async def create_order(order: Order):
+class SoulContract(BaseModel):
+    soul_name: str
+    sin_level: int = 0
+
+@app.post("/contracts")
+async def sign_contract(contract: SoulContract):
     if not producer:
         raise HTTPException(status_code=500, detail="Kafka producer not initialized")
     
-    order_data = order.dict()
-    order_data['status'] = 'PENDING'
+    contract_data = contract.dict()
+    contract_data['contract_id'] = f"666-{random.randint(1000, 9999)}"
+    contract_data['status'] = 'SIGNED'
     
     # Serialize to JSON
-    value_json = json.dumps(order_data).encode('utf-8')
+    value_json = json.dumps(contract_data).encode('utf-8')
     
     try:
         await producer.send_and_wait(KAFKA_TOPIC, value_json)
-        return {"message": "Order created successfully", "order": order_data}
+        return {"message": "Soul Contract Signed", "contract": contract_data}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -105,4 +122,4 @@ async def websocket_endpoint(websocket: WebSocket):
 
 @app.get("/")
 async def root():
-    return {"message": "Order Service is running"}
+    return {"message": "Contract Service is running"}
