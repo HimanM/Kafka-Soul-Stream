@@ -105,29 +105,29 @@ export default function Home() {
             {/* Background Grid */}
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#111_1px,transparent_1px),linear-gradient(to_bottom,#111_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
 
-            <div className="relative z-10 container mx-auto px-4 py-24 max-w-6xl">
+            <div className="relative z-10 container mx-auto px-4 py-20 md:py-24 max-w-6xl">
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-center mb-16"
+                    className="text-center mb-12 md:mb-16"
                 >
-                    <h1 className="text-5xl md:text-7xl font-bold mb-4 tracking-tighter text-white">
+                    <h1 className="text-4xl md:text-7xl font-bold mb-4 tracking-tighter text-white">
                         KAFKA <span className="text-green-500">SOUL</span> STREAM
                     </h1>
-                    <p className="text-gray-500 text-lg">Event-Driven Soul Architecture</p>
+                    <p className="text-gray-500 text-sm md:text-lg">Event-Driven Soul Architecture</p>
                 </motion.div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
                     {/* Soul Contract Section */}
                     <motion.div
                         initial={{ opacity: 0, x: -50 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.2 }}
                     >
-                        <GlassCard className="p-8 h-full flex flex-col items-center justify-center text-center border-green-500/20 shadow-[0_0_50px_-12px_rgba(34,197,94,0.2)]">
+                        <GlassCard className="p-6 md:p-8 h-full flex flex-col items-center justify-center text-center border-green-500/20 shadow-[0_0_50px_-12px_rgba(34,197,94,0.2)]">
                             <SoulOrb active={loading} />
 
-                            <h2 className="text-3xl font-bold text-white mb-2">The Offering</h2>
+                            <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">The Offering</h2>
                             <p className="text-gray-400 mb-8 max-w-md">
                                 Exchange your soul for eternal knowledge of distributed systems.
                                 Transaction is irreversible.
@@ -184,16 +184,16 @@ export default function Home() {
                         transition={{ delay: 0.4 }}
                         className="flex flex-col h-[600px]"
                     >
-                        <div className="flex items-center justify-between mb-4 px-2">
-                            <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 px-2 gap-4 md:gap-0">
+                            <h2 className="text-xl md:text-2xl font-bold text-white flex items-center gap-2">
                                 <FaTerminal className="text-green-500" />
                                 Live Soul Log
                             </h2>
-                            <div className="flex gap-2 text-xs">
-                                <span className="flex items-center gap-1 text-blue-400"><span className="w-2 h-2 rounded-full bg-blue-500"></span>CONTRACT</span>
-                                <span className="flex items-center gap-1 text-yellow-400"><span className="w-2 h-2 rounded-full bg-yellow-500"></span>JUDGMENT</span>
-                                <span className="flex items-center gap-1 text-purple-400"><span className="w-2 h-2 rounded-full bg-purple-500"></span>ASCENSION</span>
-                                <span className="flex items-center gap-1 text-red-500"><span className="w-2 h-2 rounded-full bg-red-600"></span>REVELATION</span>
+                            <div className="flex flex-wrap gap-x-4 gap-y-2 text-[10px] md:text-xs">
+                                <span className="flex items-center gap-1 text-blue-400"><span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-blue-500"></span>CONTRACT</span>
+                                <span className="flex items-center gap-1 text-yellow-400"><span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-yellow-500"></span>JUDGMENT</span>
+                                <span className="flex items-center gap-1 text-purple-400"><span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-purple-500"></span>ASCENSION</span>
+                                <span className="flex items-center gap-1 text-red-500"><span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-red-600"></span>REVELATION</span>
                             </div>
                         </div>
 
