@@ -14,6 +14,8 @@ async def ship_order(payment):
     await asyncio.sleep(1)
     return {
         "order_id": payment.get('order_id'),
+        "user_name": payment.get('user_name'),
+        "shipping_address": payment.get('shipping_address'),
         "status": "SHIPPED",
         "tracking_number": "TRACK-12345"
     }

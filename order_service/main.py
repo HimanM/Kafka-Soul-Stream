@@ -6,6 +6,7 @@ from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
 from contextlib import asynccontextmanager
 import os
 from typing import List
+import random
 
 # Configuration
 KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'kafka:9092')
@@ -73,9 +74,14 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 class Order(BaseModel):
-    user_id: str
+    user_name: str
     items: list
     total_amount: float
+
+def generate_address():
+    streets = ["Maple St", "Oak Ave", "Pine Ln", "Cedar Blvd", "Elm Dr"]
+    cities = ["New York", "San Francisco", "Austin", "Seattle", "Boston"]
+    return f"{random.randint(100, 999)} {random.choice(streets)}, {random.choice(cities)}"
 
 @app.post("/orders")
 async def create_order(order: Order):
@@ -83,7 +89,9 @@ async def create_order(order: Order):
         raise HTTPException(status_code=500, detail="Kafka producer not initialized")
     
     order_data = order.dict()
+    order_data['order_id'] = str(random.randint(10000, 99999))
     order_data['status'] = 'PENDING'
+    order_data['shipping_address'] = generate_address()
     
     # Serialize to JSON
     value_json = json.dumps(order_data).encode('utf-8')

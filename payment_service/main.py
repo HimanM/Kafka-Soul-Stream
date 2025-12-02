@@ -9,11 +9,13 @@ CONSUME_TOPIC = os.getenv('CONSUME_TOPIC', 'orders')
 PRODUCE_TOPIC = os.getenv('PRODUCE_TOPIC', 'payments')
 
 async def process_payment(order):
-    print(f"Processing payment for Order ID: {order.get('user_id')}") # Using user_id as proxy for ID for now
+    print(f"Processing payment for Order ID: {order.get('order_id')}")
     # Mock payment processing logic
     await asyncio.sleep(1) # Simulate delay
     return {
-        "order_id": order.get('user_id'), # Simplified
+        "order_id": order.get('order_id'),
+        "user_name": order.get('user_name'),
+        "shipping_address": order.get('shipping_address'),
         "status": "SUCCESS",
         "amount": order.get('total_amount')
     }
