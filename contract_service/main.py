@@ -14,6 +14,7 @@ KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'kafka:9092')
 KAFKA_TOPIC = os.getenv('KAFKA_TOPIC', 'contracts')
 KAFKA_JUDGMENTS_TOPIC = 'judgments'
 KAFKA_ASCENSIONS_TOPIC = 'ascensions'
+KAFKA_REVELATIONS_TOPIC = 'revelations'
 
 # Global Producer
 producer = None
@@ -41,13 +42,15 @@ manager = ConnectionManager()
 
 async def consume_events():
     consumer = AIOKafkaConsumer(
-        KAFKA_TOPIC, KAFKA_JUDGMENTS_TOPIC, KAFKA_ASCENSIONS_TOPIC,
+        KAFKA_TOPIC, KAFKA_JUDGMENTS_TOPIC, KAFKA_ASCENSIONS_TOPIC, KAFKA_REVELATIONS_TOPIC,
         bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
         group_id="soul-monitor-group"
     )
     await consumer.start()
+    print(f"Contract Consumer started on topics: {KAFKA_TOPIC}, {KAFKA_JUDGMENTS_TOPIC}, {KAFKA_ASCENSIONS_TOPIC}, {KAFKA_REVELATIONS_TOPIC}")
     try:
         async for msg in consumer:
+            print(f"CONSUMER RECEIVED: {msg.topic} - {msg.value}")
             event_type = msg.topic
             data = json.loads(msg.value.decode('utf-8'))
             message = json.dumps({
@@ -55,6 +58,9 @@ async def consume_events():
                 "data": data
             })
             await manager.broadcast(message)
+            print(f"BROADCASTED: {message}")
+    except Exception as e:
+        print(f"CONSUMER ERROR: {e}")
     finally:
         await consumer.stop()
 

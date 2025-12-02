@@ -19,6 +19,7 @@ async def place_soul(judgment):
     return {
         "contract_id": judgment.get('contract_id'),
         "soul_name": judgment.get('soul_name'),
+        "verdict": judgment.get('verdict'),
         "final_destination": destination,
         "status": "SEALED"
     }
@@ -35,10 +36,11 @@ async def consume():
 
     await consumer.start()
     await producer.start()
-    print("Limbo Service Started")
+    print(f"Limbo Service Started. Listening on {CONSUME_TOPIC}, Producing to {PRODUCE_TOPIC}")
 
     try:
         async for msg in consumer:
+            print(f"LIMBO CONSUMER RECEIVED: {msg.topic}")
             try:
                 judgment_data = json.loads(msg.value.decode('utf-8'))
                 print(f"Received Judgment: {judgment_data}")

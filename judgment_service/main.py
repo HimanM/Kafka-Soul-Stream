@@ -35,10 +35,11 @@ async def consume():
 
     await consumer.start()
     await producer.start()
-    print("Judgment Service Started")
+    print(f"Judgment Service Started. Listening on {CONSUME_TOPIC}, Producing to {PRODUCE_TOPIC}")
 
     try:
         async for msg in consumer:
+            print(f"JUDGMENT CONSUMER RECEIVED: {msg.topic}")
             try:
                 contract_data = json.loads(msg.value.decode('utf-8'))
                 print(f"Received Contract: {contract_data}")
