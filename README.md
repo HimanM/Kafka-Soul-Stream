@@ -2,7 +2,7 @@
 
 > *A distributed soul harvesting system powered by Apache Kafka. Built to master the dark arts of Event Streaming.*
 
-![Soul Stream Banner](PLACEHOLDER_BANNER_IMAGE)
+![Soul Stream Banner](docs/soul_stream_banner.png)
 
 ## 🕯️ The Prophecy (Introduction)
 
@@ -14,11 +14,11 @@
 
 | The Offering (Frontend) | The Verdict (Revelation) |
 |:-----------------------:|:------------------------:|
-| ![Frontend UI](PLACEHOLDER_FRONTEND_IMAGE) | ![Verdict Overlay](PLACEHOLDER_VERDICT_IMAGE) |
+| ![Frontend UI](docs/home.png) | ![Verdict Overlay](docs/soul_sold.png) |
 
 | The Architecture (Docs) | Live Soul Log |
 |:-----------------------:|:------------------------:|
-| ![Kafka Docs](PLACEHOLDER_DOCS_IMAGE) | ![Live Log](PLACEHOLDER_LOG_IMAGE) |
+| ![Kafka Docs](docs/kafka_docs.png) | ![Live Log](docs/live_soul_log.png) |
 
 ## 🏰 The Realms (Microservices)
 
@@ -57,6 +57,17 @@ docker-compose up -d --build
 ```
 
 Access the portal at: `http://localhost:3000`
+
+## 📜 The Scrolls of Truth (Infrastructure Evidence)
+
+To prove the ritual was successful, observe the following manifestations:
+
+### 1. The Summoning (Build & Start)
+![Docker Build Logs](docs/docker_build.png)
+
+### 2. The Gatekeepers (Running Containers)
+![Docker PS Output](docs/docker_ps.png)
+
 
 ## 📜 The Soul Protocol (Event Flow)
 

@@ -44,7 +44,8 @@ services:
       CONSUME_TOPIC: contracts
       PRODUCE_TOPIC: judgments
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
 
   limbo-service:
     build: ./limbo_service
@@ -53,7 +54,8 @@ services:
       CONSUME_TOPIC: judgments
       PRODUCE_TOPIC: ascensions
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
 
   revelation-service:
     build: ./revelation_service
@@ -62,7 +64,8 @@ services:
       CONSUME_TOPIC: ascensions
       PRODUCE_TOPIC: revelations
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
 
   frontend:
     build:
